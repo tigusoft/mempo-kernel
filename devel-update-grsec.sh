@@ -4,6 +4,10 @@
 source 'support.sh' || { echo "Can not load lib" ; exit 1; }
 source 'lib-ifccs_00004.sh' || { echo "Can not load lib lib-ifccs_00004.sh" ; exit 1; }
 
+for prog in "rsstail" "grep" "awk" "gawk" "git" ; do
+	hash "$prog" || exit_error "Can not find program/command: $prog. Please install it first." ;
+done
+
 opt_stable_version="stable" # the 3.2 kernel was "stable2" untill 2014-06-23, now it's "stable". 
 
 skip_intro=false
@@ -138,12 +142,20 @@ url="${url_base_stable}${new_grsec}"
 gr_path='kernel-sources/grsecurity/'
 echo "new_grsec=$new_grsec is the current version"
 
-kernel_ver=$( printf '%s\n' "$new_grsec" | sed -e 's/grsecurity-3.1-\(3\.[0-9]*\.[0-9]*\).*patch/\1/g' )
-
-# echo 'grsecurity-3.0-3.2.58-201405112002.patch' | sed -e 's/grsecurity-3.0-\(3\.2\.[0-9]*\).*patch/\1/g'
+kernel_ver=$( printf '%s\n' "$new_grsec" | sed -e 's/grsecurity-3.1-\([2-4]\.[0-9]*\.[0-9]*\).*patch/\1/g' )
+# EXAMPLE: echo 'grsecurity-3.0-3.2.58-201405112002.patch' | sed -e 's/grsecurity-3.0-\(3\.2\.[0-9]*\).*patch/\1/g'
 echo "kernel_ver=${kernel_ver} as autodetected from new (online) grsecurity version"
 
+ex='^[0-9]{1}\.[0-9]{1,4}\.[0-9]{1,4}$' ; 
+if [[ "$kernel_ver" =~ $ex ]] ; then echo "The kernel version looks valid"; 
+else
+	echo "Error: The kernel version looks invalid ($kernel_ver) something is wrong, exiting."; exit 1
+fi
+
+
 if [[ "$kernel_ver" != "$kernel_general_version" ]] ; then
+	print_error_header "Warning: new kernel version?"
+	echo "Info: kernel version expected was [$kernel_general_version] but we got [$kernel_ver] from [$new_grsec]" >&2 
 	echo "The version of kernel from new (online) grsecurity version differs from the version for which this SameKernel was yet configured."
 	echo "You need to manually increase the (vanilla) KERNEL VERSION following instructions from the readme file."
 	echo "Commit version for next kernel, and then run this script again."
@@ -154,7 +166,6 @@ if [[ "$kernel_ver" != "$kernel_general_version" ]] ; then
 	file_source="kernel-build/linux-mempo/sourcecode.list"
 
 	# TODO do the below automatically (after informing what will be done)
-	echo "Bad kernel version $kernel_general_version vs $kernel_ver from $new_grsec" >&2 
 	echo "To do this, for example you can take such steps:"
 	echo ""
 	echo "  1) in $file_source change $ver_a to $ver_b (leave the checksum or edit it rigth away)"
@@ -162,8 +173,8 @@ if [[ "$kernel_ver" != "$kernel_general_version" ]] ; then
 	echo "  3) start build with ./run.sh - it will stop after complaining about wrong checksum, write the actuall checksum into $file_source if you didn't previously"
 	echo "  3b) double check the checksum (e.g. various ISP connections etc)"
 	echo ""
-	
-	exit 101
+
+	exit_error "Update kernel version as described above"
 fi
 
 

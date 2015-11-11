@@ -61,3 +61,7 @@ function print_ok_header() {
 	echo -e "\n$bcolor_bgrgreen   $bcolor_bgrblack$bcolor_green $1 $bcolor_bgrgreen$bcolor_eel$bcolor_zero\n"
 }
 
+function print_error_header() {
+	echo -e "\n$bcolor_bgrred   $bcolor_bgrblack$bcolor_red $1 $bcolor_bgrred$bcolor_eel$bcolor_zero\n"
+}
+
