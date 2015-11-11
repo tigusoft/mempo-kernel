@@ -8,12 +8,14 @@ for prog in "rsstail" "grep" "awk" "gawk" "git" ; do
 	hash "$prog" || exit_error "Can not find program/command: $prog. Please install it first." ;
 done
 
-opt_stable_version="testing" # the 3.2 kernel was "stable2" untill 2014-06-23, now it's "stable". 
+# select the grsecurity version that we use:
+opt_version_name="testing" # the 3.2 kernel was "stable2" untill 2014-06-23, now it's "stable", since 2015-11 it's "testing"
+opt_version_name_url="test" # was "stable", since 2015-11 it's "test".
 
 skip_intro=false
 assume_yes=false
 as_bot=false
-url_base_stable="http://grsecurity.net/stable/" # this remains for both stable2 and stable
+url_base_version="http://grsecurity.net/$opt_version_name_url/"
 
 function help() {
 	echo "Help and usage:"
@@ -79,11 +81,11 @@ mywait
 function download() { 
 	echo "Downloading $new_grec from $url " 
 	set -x  
-	cd $gr_path ; rm changelog-${opt_stable_version}.txt 
+	cd $gr_path ; rm changelog-${opt_version_name}.txt 
 
 	# TODO detect if we are re-downloading same file again, if that link redirects to a file name that we already have 
 	# for the kernel/sig and then report a bug that this is the same version so no need for upgrade
-	wget --timeout=15  http://grsecurity.net/changelog-${opt_stable_version}.txt  $url $url.sig 
+	wget --timeout=15  http://grsecurity.net/changelog-${opt_version_name}.txt  $url $url.sig 
 	sha256=$(sha256deep  -q  $new_grsec)  ;  cd ../..
 	set +x
 } 
@@ -136,10 +138,10 @@ source kernel-build/linux-mempo/env-data.sh
 echo "kernel_general_version=$kernel_general_version"
 
 echo "Checking new version of grsecurity from network"
-new_grsec=$(rsstail -u http://grsecurity.net/${opt_stable_version}_rss.php -1 | awk  '{print $2}')
+new_grsec=$(rsstail -u http://grsecurity.net/${opt_version_name}_rss.php -1 | awk  '{print $2}')
 echo "new_grsec=$new_grsec"
-url="${url_base_stable}${new_grsec}"
-gr_path='kernel-sources/grsecurity/'
+url="${url_base_version}${new_grsec}"
+gr_path='kernel-sources/grsecurity/' 
 echo "new_grsec=$new_grsec is the current version"
 
 kernel_ver=$( printf '%s\n' "$new_grsec" | sed -e 's/grsecurity-3.1-\([2-4]\.[0-9]*\.[0-9]*\).*patch/\1/g' )
@@ -232,7 +234,7 @@ echo "Press ENTER to continue if all is OK with signature (ctrl-c to abort)"
 mywait
 
 echo "Commiting the new grsec ($new_grsec) files to git in one commit:"
-git add $gr_path/$new_grsec $gr_path/$new_grsec.sig $gr_path/changelog-${opt_stable_version}.txt || {
+git add $gr_path/$new_grsec $gr_path/$new_grsec.sig $gr_path/changelog-${opt_version_name}.txt || {
 	start_quit_dev
 	echo "No new files (grsecurity patches?) were added now (git already had them)" 
 	echo "Are you sure this is OK? That should not happen if you are really now downloading new grsecurity ! @@@"
