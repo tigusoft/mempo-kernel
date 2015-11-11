@@ -8,7 +8,7 @@ for prog in "rsstail" "grep" "awk" "gawk" "git" ; do
 	hash "$prog" || exit_error "Can not find program/command: $prog. Please install it first." ;
 done
 
-opt_stable_version="stable" # the 3.2 kernel was "stable2" untill 2014-06-23, now it's "stable". 
+opt_stable_version="testing" # the 3.2 kernel was "stable2" untill 2014-06-23, now it's "stable". 
 
 skip_intro=false
 assume_yes=false
