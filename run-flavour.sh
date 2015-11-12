@@ -12,6 +12,8 @@ version=$( git describe --tags )
 computer=$HOSTNAME
 date_start=$( date -u +%s )
 
+kernel_download_url_base="https://www.kernel.org/pub/linux/kernel/v4.x/"
+
 good_readlink_HOME="/homesrv/kernelbuild/" # this changes with versions/releases, see doc/build.txt , bookmark [home_readlink]. backlink: if you would remove/mov this line, update doc/build.txt as it references us.
 
 # set -x 
@@ -135,7 +137,7 @@ then
 			echo "Kernel sources are not cached in ${user_download_folder}"
 
 			echo "Need .xz to download from the Internet."
-			download_wget "https://www.kernel.org/pub/linux/kernel/v3.x/${kernel_file_download}" -O "kernel-sources/kernel/${kernel_file_download}"
+			download_wget "${kernel_download_url_base}${kernel_file_download}" -O "kernel-sources/kernel/${kernel_file_download}"
 
 			echo "We downloaded the file from internet, and we will now save it into ${user_download_folder}"
 			mkdir -p "${user_download_folder}/"
@@ -165,7 +167,7 @@ if [ ! -r "kernel-sources/kernel/${kernel_file_sig}" ]
 then
 	echo "Kernel signature is not ready (${kernel_file_sig})"
 	echo "Need to download signature from the Internet."
-	download_wget "https://www.kernel.org/pub/linux/kernel/v3.x/${kernel_file_sig}" -O "kernel-sources/kernel/${kernel_file_sig}"
+	download_wget "${kernel_download_url_base}${kernel_file_sig}" -O "kernel-sources/kernel/${kernel_file_sig}"
 fi
 
 echo "-------------------------------------------------------------------------"
