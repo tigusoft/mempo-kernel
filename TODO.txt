@@ -18,7 +18,9 @@
 	make[2]: *** Waiting for unfinished jobs....
 	  CC [M]  net/tipc/addr.o
 
+Probably related to VIDEO_COBALT:
 
+  warning: (VIDEO_COBALT) selects VIDEO_ADV7604 which has unmet di 
 
 
 
