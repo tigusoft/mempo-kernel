@@ -3,6 +3,27 @@
 === REVIEW TODO (by mempo) ===
 
 
+--- Kernel problems TODO ---
+
+  CC [M]  drivers/gpu/drm/nouveau/nouveau_gem.o
+	drivers/media/i2c/adv7604.c: In function ‘adv76xx_get_format’:
+	drivers/media/i2c/adv7604.c:1861:3: error: implicit declaration of function ‘v4l2_subdev_get_try_format’ [-Werror=implicit-function-declaration]
+	drivers/media/i2c/adv7604.c:1861:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+	drivers/media/i2c/adv7604.c: In function ‘adv76xx_set_format’:
+	drivers/media/i2c/adv7604.c:1890:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+	cc1: some warnings being treated as errors
+	make[4]: *** [drivers/media/i2c/adv7604.o] Error 1
+	make[3]: *** [drivers/media/i2c] Error 2
+	make[2]: *** [drivers/media] Error 2
+	make[2]: *** Waiting for unfinished jobs....
+	  CC [M]  net/tipc/addr.o
+
+
+
+
+
+
+
 DONE?
 
 
